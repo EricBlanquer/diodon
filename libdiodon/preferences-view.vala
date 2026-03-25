@@ -129,6 +129,9 @@ namespace Diodon
                     warning("Could not initialize preferences dialog. Error: " + e.message);
                 }
             }
+            else {
+                preferences.present();
+            }
         }
 
         private bool _inhibit_save = false;

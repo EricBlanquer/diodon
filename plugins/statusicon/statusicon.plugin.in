@@ -1,0 +1,7 @@
+[Plugin]
+Module=statusicon
+Name=Status Icon
+Description=Access clipboard history with a native GTK status icon (supports image preview and proper scroll reset).
+Authors=Eric Blanquer <eric.blanquer@gmail.com>
+Copyright=Copyright © 2025 Eric Blanquer
+

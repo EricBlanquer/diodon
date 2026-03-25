@@ -53,7 +53,7 @@
   </schema>
   <schema gettext-domain="diodon" id="net.launchpad.Diodon.plugins" path="/net/launchpad/diodon/plugins/">
     <key name="active-plugins" type="as">
-      <default>['indicator']</default>
+      <default>['statusicon']</default>
       <summary>Active plugins</summary>
       <description>List of active plugins.</description>
     </key>

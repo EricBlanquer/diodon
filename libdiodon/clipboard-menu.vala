@@ -45,6 +45,34 @@ namespace Diodon
             this.controller = controller;
             this.static_menu_items = static_menu_items;
 
+            populate(pinned_items, items, privace_mode, error);
+
+            this.key_press_event.connect(on_key_pressed);
+            this.hide.connect(() => { ClipboardMenuItem.hide_preview(); });
+            this.map.connect(() => {
+                if (get_window() != null) {
+                    int x, y;
+                    get_window().get_origin(out x, out y);
+                    _saved_menu_x = x;
+                    _saved_menu_y = y;
+                }
+            });
+        }
+
+        public void rebuild(List<IClipboardItem> pinned_items, List<IClipboardItem> items, bool privace_mode, string? error = null)
+        {
+            foreach(Gtk.Widget item in get_children()) {
+                remove(item);
+                if(static_menu_items == null || static_menu_items.find(item) == null) {
+                    item.destroy();
+                    item.dispose();
+                }
+            }
+            populate(pinned_items, items, privace_mode, error);
+        }
+
+        private void populate(List<IClipboardItem> pinned_items, List<IClipboardItem> items, bool privace_mode, string? error = null)
+        {
             if(error != null) {
                 Gtk.MenuItem error_item = new Gtk.MenuItem.with_label(wrap_label(error));
                 error_item.set_sensitive(false);
@@ -80,8 +108,8 @@ namespace Diodon
             append(sep_item);
 
             if(static_menu_items != null) {
-                foreach(Gtk.MenuItem menu_item in static_menu_items) {
-                    append(menu_item);
+                foreach(Gtk.Widget menu_item in static_menu_items) {
+                    append((Gtk.MenuItem) menu_item);
                 }
             }
 
@@ -98,17 +126,6 @@ namespace Diodon
             append(quit_item);
 
             show_all();
-
-            this.key_press_event.connect(on_key_pressed);
-            this.hide.connect(() => { ClipboardMenuItem.hide_preview(); });
-            this.map.connect(() => {
-                if (get_window() != null) {
-                    int x, y;
-                    get_window().get_origin(out x, out y);
-                    _saved_menu_x = x;
-                    _saved_menu_y = y;
-                }
-            });
         }
 
         /**

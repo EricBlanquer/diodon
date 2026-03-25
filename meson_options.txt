@@ -1,2 +1,3 @@
 option('disable-indicator-plugin', type : 'boolean', value : false, description : 'Disable build of indicator plugin')
+option('disable-statusicon-plugin', type : 'boolean', value : false, description : 'Disable build of status icon plugin')
 option('enable-unity-scope', type : 'boolean', value : false, description : 'Disable build of indicator plugin')

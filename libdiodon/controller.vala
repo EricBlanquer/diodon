@@ -263,6 +263,11 @@ namespace Diodon
 
             on_select_item(item);
 
+            if(!configuration.use_primary) {
+                ClipboardManager primary_manager = clipboard_managers.get(ClipboardType.PRIMARY);
+                primary_manager.select_item(item);
+            }
+
             if(configuration.instant_paste) {
                 execute_paste(item);
             }
@@ -552,12 +557,13 @@ namespace Diodon
             }
 
             if(recent_menu != null) {
-                recent_menu.destroy_menu();
+                recent_menu.rebuild(pinned, filtered_items,
+                                    storage.is_privacy_mode_enabled(), error);
+            } else {
+                recent_menu = new ClipboardMenu(this, pinned, filtered_items,
+                                                static_recent_menu_items,
+                                                storage.is_privacy_mode_enabled(), error);
             }
-
-            recent_menu = new ClipboardMenu(this, pinned, filtered_items,
-                                            static_recent_menu_items,
-                                            storage.is_privacy_mode_enabled(), error);
             on_recent_menu_changed(recent_menu);
         }
 

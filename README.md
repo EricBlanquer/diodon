@@ -4,11 +4,14 @@ Fork of [Diodon](https://github.com/diodon-dev/diodon), a GTK+ clipboard manager
 
 ## Fork changes
 
-This fork adds the following improvements over the upstream version:
+This fork adds the following improvements over the upstream version (PRs were submitted upstream but rejected — the maintainer prefers features as plugins and requires [Launchpad issues](https://bugs.launchpad.net/diodon) before PRs):
 
-- **Fix 100% CPU on startup with large clipboard history** ([PR #49](https://github.com/diodon-dev/diodon/pull/49)) — Truncates text before processing and defers image decoding (lazy loading)
-- **Image preview tooltip** ([PR #53](https://github.com/diodon-dev/diodon/pull/53)) — Hover over an image item in the menu to see a scaled preview
-- **Pinned clipboard items** ([PR #54](https://github.com/diodon-dev/diodon/pull/54)) — Pin items to keep them always visible at the top of the menu, preserved when clearing history. Right-click to pin/unpin, or press `p`. Manage pinned items in Preferences > Pinned tab
+- **Fix 100% CPU on startup with large clipboard history** — Truncates text before processing and defers image decoding (lazy loading). The upstream maintainer addressed the issue differently in [#50](https://github.com/diodon-dev/diodon/pull/50) [#51](https://github.com/diodon-dev/diodon/pull/51) [#52](https://github.com/diodon-dev/diodon/pull/52), but our additional optimizations (early truncation, lazy pixbuf decode) remain
+- **Image preview tooltip** — Hover over an image item in the menu to see a scaled preview. Only works with the keyboard shortcut or the Status Icon plugin (not with the default Ayatana indicator, which does not support hover events)
+- **Pinned clipboard items** — Pin items to keep them always visible at the top of the menu, preserved when clearing history. Right-click to pin/unpin, or press `p`. Manage pinned items in Preferences > Pinned tab
+- **Status Icon plugin** — Alternative to the default Ayatana indicator plugin, using a native GTK status icon. Supports image preview tooltips and proper scroll reset after clearing history. Works on X11/Cinnamon (uses deprecated `Gtk.StatusIcon`, not compatible with Wayland)
+- **PRIMARY clipboard sync** — When "Use primary selection" is disabled, selected items are still synced to the PRIMARY clipboard for middle-click paste
+- **Preferences window focus** — Reopening preferences brings the existing window to front instead of silently ignoring the action
 
 ## Installing from source
 
@@ -19,7 +22,7 @@ This fork adds the following improvements over the upstream version:
 
 ### Build and install
 
-    git clone https://github.com/EricBlanquer/diodon.git && cd diodon
+    git clone -b main https://github.com/EricBlanquer/diodon.git && cd diodon
     meson setup builddir && cd builddir
     ninja
     sudo ninja install

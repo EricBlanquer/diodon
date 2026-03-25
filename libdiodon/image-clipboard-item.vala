@@ -164,7 +164,7 @@ namespace Diodon
 	     */
         public Gdk.Pixbuf? get_preview_pixbuf()
         {
-            return create_preview_pixbuf(_pixbuf);
+            return create_preview_pixbuf(ensure_pixbuf());
         }
 
         /**

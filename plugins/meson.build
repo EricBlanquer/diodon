@@ -19,3 +19,7 @@
 if not get_option('disable-indicator-plugin')
     subdir('indicator')
 endif
+
+if not get_option('disable-statusicon-plugin')
+    subdir('statusicon')
+endif
