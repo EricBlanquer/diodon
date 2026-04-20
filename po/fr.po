@@ -118,6 +118,23 @@ msgstr ""
 "dans le presse-papier."
 
 #: ../data/net.launchpad.Diodon.gschema.xml.in.in.h:13
+msgid "Strip trailing whitespace from each line"
+msgstr "Supprimer les espaces en fin de ligne"
+
+#: ../data/net.launchpad.Diodon.gschema.xml.in.in.h:14
+msgid ""
+"When text is captured from the clipboard or primary selection, strip "
+"trailing whitespace from each line while preserving line breaks and leading "
+"indentation. The transformed text is written back so any subsequent paste "
+"(Ctrl+V, middle-click) yields the cleaned value."
+msgstr ""
+"Lorsque du texte est capturé depuis le presse-papier ou la sélection "
+"primaire, supprimer les espaces et tabulations en fin de chaque ligne tout "
+"en conservant les sauts de ligne et l'indentation. Le texte nettoyé est "
+"réinjecté, donc tout collage ultérieur (Ctrl+V, clic milieu) utilise la "
+"version propre."
+
+#: ../data/net.launchpad.Diodon.gschema.xml.in.in.h:15
 msgid "Number of recent clipboard items"
 msgstr "Nombre d'éléments récents dans le presse-papiers"
 
@@ -187,7 +204,22 @@ msgstr "Synchroniser les presse-papiers"
 msgid "_Automatically paste selected item"
 msgstr "_Coller automatiquement l'élément sélectionné"
 
+#: ../data/preferences.ui.h:13
+msgid "Strip trailing _whitespace from each line"
+msgstr "_Supprimer les espaces en fin de ligne"
+
 #: ../data/preferences.ui.h:14
+msgid ""
+"Remove trailing spaces and tabs from each line when text is captured. Line "
+"breaks and leading indentation are preserved. Works for any paste method "
+"(Ctrl+V, middle-click) as long as the corresponding clipboard is watched."
+msgstr ""
+"Supprime les espaces et tabulations en fin de chaque ligne lors de la "
+"capture du texte. Les sauts de ligne et l'indentation sont conservés. "
+"Fonctionne pour tout mode de collage (Ctrl+V, clic milieu) à condition que "
+"le presse-papier correspondant soit surveillé."
+
+#: ../data/preferences.ui.h:15
 msgid "Number of recent clipboard items to be shown in clipboard menu."
 msgstr "Nombre d'éléments récents à afficher dans le menu."
 

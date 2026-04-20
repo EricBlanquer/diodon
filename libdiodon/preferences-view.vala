@@ -93,6 +93,14 @@ namespace Diodon
                         configuration.instant_paste = !configuration.instant_paste;
                     } );
 
+                    // trim trailing whitespace per line
+                    Gtk.ToggleButton trim_trailing_whitespace =
+                        builder.get_object("checkbutton_trim_trailing_whitespace") as Gtk.ToggleButton;
+                    trim_trailing_whitespace.active = configuration.trim_trailing_whitespace;
+                    trim_trailing_whitespace.toggled.connect(() => {
+                        configuration.trim_trailing_whitespace = !configuration.trim_trailing_whitespace;
+                    } );
+
                     // recent_items_size
                     Gtk.SpinButton recent_items_size =
                         builder.get_object("spinbutton_recent_items_size") as Gtk.SpinButton;

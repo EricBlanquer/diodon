@@ -180,6 +180,9 @@ namespace Diodon
             settings_clipboard.bind("instant-paste", configuration,
                 "instant-paste", SettingsBindFlags.DEFAULT);
 
+            settings_clipboard.bind("trim-trailing-whitespace", configuration,
+                "trim-trailing-whitespace", SettingsBindFlags.DEFAULT);
+
             settings_clipboard.bind("recent-items-size", configuration,
                 "recent-items-size", SettingsBindFlags.DEFAULT);
             settings_clipboard.changed["recent-items-size"].connect(
@@ -258,19 +261,70 @@ namespace Diodon
          */
         public async void select_item(IClipboardItem item)
         {
-            yield storage.select_item(item, configuration.use_clipboard,
+            IClipboardItem paste_item = transform_for_paste(item);
+
+            // bump the transformed variant in history (not the untrimmed
+            // original) so zeitgeist reflects what is actually pasted and
+            // the clipboard watcher sees current_items matching the
+            // text written to the clipboard
+            yield storage.select_item(paste_item, configuration.use_clipboard,
                 configuration.use_primary);
 
-            on_select_item(item);
+            on_select_item(paste_item);
 
             if(!configuration.use_primary) {
                 ClipboardManager primary_manager = clipboard_managers.get(ClipboardType.PRIMARY);
-                primary_manager.select_item(item);
+                primary_manager.select_item(paste_item);
             }
 
             if(configuration.instant_paste) {
-                execute_paste(item);
+                execute_paste(paste_item);
             }
+        }
+
+        /**
+         * Apply configured paste-time transformations to the given item.
+         * Returns the same instance when no transformation applies.
+         *
+         * Used to cover history items captured before the option was
+         * enabled; fresh captures are already cleaned up in add_text_item.
+         */
+        private IClipboardItem transform_for_paste(IClipboardItem item)
+        {
+            if(configuration.trim_trailing_whitespace && item is TextClipboardItem) {
+                string text = item.get_text();
+                string trimmed = chomp_each_line(text);
+                if(trimmed != text) {
+                    return new TextClipboardItem(item.get_clipboard_type(),
+                        trimmed, item.get_origin(), new DateTime.now_utc());
+                }
+            }
+            return item;
+        }
+
+        /**
+         * Strip trailing spaces and tabs from each line while preserving
+         * line breaks, leading indentation and carriage returns.
+         */
+        private static string chomp_each_line(string text)
+        {
+            string[] lines = text.split("\n");
+            for(int i = 0; i < lines.length; i++) {
+                lines[i] = strip_trailing_spaces_tabs(lines[i]);
+            }
+            return string.joinv("\n", lines);
+        }
+
+        private static string strip_trailing_spaces_tabs(string line)
+        {
+            int len = line.length;
+            while(len > 0 && (line[len - 1] == ' ' || line[len - 1] == '\t')) {
+                len--;
+            }
+            if(len == line.length) {
+                return line;
+            }
+            return line.substring(0, len);
         }
 
         /**
@@ -325,8 +379,25 @@ namespace Diodon
          */
         public async void add_text_item(ClipboardType type, string text, string? origin)
         {
-            IClipboardItem item = new TextClipboardItem(type, text, origin, new DateTime.now_utc());
+            string final_text = text;
+            if(configuration.trim_trailing_whitespace) {
+                final_text = chomp_each_line(text);
+            }
+
+            IClipboardItem item = new TextClipboardItem(type, final_text, origin, new DateTime.now_utc());
             yield add_item(item);
+
+            if(final_text != text) {
+                // push the cleaned text back onto the originating clipboard so
+                // any subsequent paste (Ctrl+V, middle-click) yields the
+                // trimmed value. The resulting owner_change will loop through
+                // add_text_item again but trim is idempotent and add_item will
+                // skip the duplicate.
+                ClipboardManager manager = clipboard_managers.get(type);
+                if(manager != null) {
+                    manager.select_item(item);
+                }
+            }
         }
 
         /**

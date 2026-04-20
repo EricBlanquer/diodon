@@ -537,6 +537,12 @@ namespace Diodon
             unowned ByteArray payload = event.payload;
             DateTime date_copied = new DateTime.from_unix_utc(event.timestamp);
 
+            if(text == null) {
+                warning("Skipping clipboard item with null text (checksum: %s, interpretation: %s)",
+                    checksum, interpretation);
+                return null;
+            }
+
             try {
                 if(strcmp(NFO.PLAIN_TEXT_DOCUMENT, interpretation) == 0) {
                    item = new TextClipboardItem(ClipboardType.NONE, text, origin, date_copied, checksum);

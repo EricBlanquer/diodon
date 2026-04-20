@@ -30,6 +30,11 @@
       <summary>Automatically paste selected item</summary>
       <description>Automatically paste selected item instead of just copying it to the clipboard.</description>
     </key>
+    <key name="trim-trailing-whitespace" type="b">
+      <default>false</default>
+      <summary>Strip trailing whitespace from each line</summary>
+      <description>When text is captured from the clipboard or primary selection, strip trailing whitespace from each line while preserving line breaks and leading indentation. The transformed text is written back so any subsequent paste (Ctrl+V, middle-click) yields the cleaned value.</description>
+    </key>
     <key name="recent-items-size" type="u">
       <default>25</default>
       <summary>Number of recent clipboard items</summary>

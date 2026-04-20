@@ -58,6 +58,13 @@ namespace Diodon
         public bool instant_paste { get; set; default = true; }
 
         /**
+         * flag whether trailing whitespace should be stripped from each line
+         * when text is captured from the clipboard or primary selection.
+         * Line breaks and leading indentation are preserved.
+         */
+        public bool trim_trailing_whitespace { get; set; default = false; }
+
+        /**
          * regex pattern so all clipboard items matching this pattern will
          * be filtered and not added to clipboard history.
          */

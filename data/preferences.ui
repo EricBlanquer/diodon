@@ -160,6 +160,23 @@
                   </packing>
                 </child>
                 <child>
+                  <object class="GtkCheckButton" id="checkbutton_trim_trailing_whitespace">
+                    <property name="label" translatable="yes">Strip trailing _whitespace from each line</property>
+                    <property name="visible">True</property>
+                    <property name="can_focus">True</property>
+                    <property name="receives_default">False</property>
+                    <property name="tooltip_text" translatable="yes">Remove trailing spaces and tabs from each line when text is captured. Line breaks and leading indentation are preserved. Works for any paste method (Ctrl+V, middle-click) as long as the corresponding clipboard is watched.</property>
+                    <property name="use_underline">True</property>
+                    <property name="xalign">0.5</property>
+                    <property name="draw_indicator">True</property>
+                  </object>
+                  <packing>
+                    <property name="expand">True</property>
+                    <property name="fill">True</property>
+                    <property name="position">6</property>
+                  </packing>
+                </child>
+                <child>
                   <object class="GtkHBox" id="hbox1">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
@@ -196,7 +213,7 @@
                   <packing>
                     <property name="expand">True</property>
                     <property name="fill">True</property>
-                    <property name="position">6</property>
+                    <property name="position">7</property>
                   </packing>
                 </child>
               </object>
