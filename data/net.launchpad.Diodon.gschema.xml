@@ -18,7 +18,7 @@
     <key name="synchronize-clipboards" type="b">
       <default>false</default>
       <summary>Synchronize clipboards</summary>
-      <description>Synchronizes the selection (an area of the screen which is selected with the mouse) and the clipboard so that anything in the selection is immediately available in the clipboard and vice versa e.g. for pasting with Ctrl + V and the middle mouse button.</description>
+      <description>Copies anything captured on the clipboard (Ctrl+C) to the primary selection so it can also be pasted with the middle mouse button. The reverse direction (primary selection to clipboard) is intentionally disabled to avoid overwriting a deliberately copied value every time you select text with the mouse.</description>
     </key>
     <key name="keep-clipboard-content" type="b">
       <default>true</default>

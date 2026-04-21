@@ -547,17 +547,26 @@ namespace Diodon
         private void synchronize(IClipboardItem item)
         {
             // only text clipboard item can be synced
-            if(item is TextClipboardItem) {
-                ClipboardType type = item.get_clipboard_type();
-                foreach(ClipboardManager clipboard_manager in clipboard_managers.get_values()) {
-                    if(type != clipboard_manager.clipboard_type) {
-                        // check if item is already active in clipboard
-                        // which will be synced to
-                        IClipboardItem current_item = storage.get_current_item(
-                            clipboard_manager.clipboard_type);
-                        if(current_item == null || !IClipboardItem.equal_func(current_item, item)) {
-                            clipboard_manager.select_item(item);
-                        }
+            if(!(item is TextClipboardItem)) {
+                return;
+            }
+
+            // sync is unidirectional CLIPBOARD -> others: syncing from PRIMARY
+            // to CLIPBOARD would clobber a deliberately copied value whenever
+            // the user selects text with the mouse for any reason (selecting
+            // a destination region to paste over, highlighting while reading,
+            // etc.), which is rarely desirable.
+            ClipboardType type = item.get_clipboard_type();
+            if(type != ClipboardType.CLIPBOARD) {
+                return;
+            }
+
+            foreach(ClipboardManager clipboard_manager in clipboard_managers.get_values()) {
+                if(type != clipboard_manager.clipboard_type) {
+                    IClipboardItem current_item = storage.get_current_item(
+                        clipboard_manager.clipboard_type);
+                    if(current_item == null || !IClipboardItem.equal_func(current_item, item)) {
+                        clipboard_manager.select_item(item);
                     }
                 }
             }

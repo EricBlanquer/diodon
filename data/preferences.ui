@@ -131,7 +131,7 @@
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
                     <property name="receives_default">False</property>
-                    <property name="tooltip_text" translatable="yes">Synchronizes the selection (an area of the screen which is selected with the mouse) and the clipboard so that anything in the selection is immediately available in the clipboard and vice versa e.g. for pasting with Ctrl + V and the middle mouse button.</property>
+                    <property name="tooltip_text" translatable="yes">Copies anything captured on the clipboard (Ctrl+C) to the primary selection so it can also be pasted with the middle mouse button. The reverse direction (primary selection to clipboard) is intentionally disabled to avoid overwriting a deliberately copied value every time you select text with the mouse.</property>
                     <property name="use_underline">True</property>
                     <property name="xalign">0.5</property>
                     <property name="draw_indicator">True</property>
