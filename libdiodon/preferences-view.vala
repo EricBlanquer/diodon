@@ -77,6 +77,14 @@ namespace Diodon
                         configuration.synchronize_clipboards = !configuration.synchronize_clipboards;
                     } );
 
+                    // synchronize between machines
+                    Gtk.ToggleButton synchronize_between_machines =
+                        builder.get_object("checkbutton_synchronize_between_machines") as Gtk.ToggleButton;
+                    synchronize_between_machines.active = configuration.synchronize_between_machines;
+                    synchronize_between_machines.toggled.connect(() => {
+                        configuration.synchronize_between_machines = !configuration.synchronize_between_machines;
+                    } );
+
                     // keep clipboard content
                     Gtk.ToggleButton keep_clipboard_content =
                         builder.get_object("checkbutton_keep_clipboard_content") as Gtk.ToggleButton;

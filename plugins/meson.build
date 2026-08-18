@@ -23,3 +23,7 @@ endif
 if not get_option('disable-statusicon-plugin')
     subdir('statusicon')
 endif
+
+if not get_option('disable-sync-plugin')
+    subdir('sync')
+endif

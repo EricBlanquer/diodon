@@ -48,6 +48,11 @@ namespace Diodon
         public bool synchronize_clipboards { get; set; default = false; }
 
         /**
+         * flag whether clipboard items should be synchronized with the peer machine
+         */
+        public bool synchronize_between_machines { get; set; default = false; }
+
+        /**
          * flag whether clipboard content should be restored when lost.
          */
         public bool keep_clipboard_content { get; set; default = true; }
@@ -116,4 +121,3 @@ namespace Diodon
         }
     }
 }
-

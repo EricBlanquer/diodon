@@ -1,0 +1,6 @@
+[Plugin]
+Module=sync
+Name=Clipboard Sync
+Description=Synchronize clipboard contents between the iop and eric machines over SSH.
+Authors=Eric Blanquer <eric.blanquer@gmail.com>
+Copyright=Copyright © 2026 Eric Blanquer

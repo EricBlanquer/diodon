@@ -161,6 +161,8 @@ namespace Diodon
         {
             settings_clipboard.bind("synchronize-clipboards", configuration,
                 "synchronize-clipboards", SettingsBindFlags.DEFAULT);
+            settings_clipboard.bind("synchronize-between-machines", configuration,
+                "synchronize-between-machines", SettingsBindFlags.DEFAULT);
             settings_clipboard.bind("add-images", configuration,
                 "add-images", SettingsBindFlags.DEFAULT);
             settings_clipboard.bind("app-paste-keybindings", configuration,
@@ -234,6 +236,12 @@ namespace Diodon
             action.activate.connect((parameter) => callback(parameter.dup_strv()));
             Application.get_default ().add_action(action);
             command_descriptions[name] = desc;
+        }
+
+        public void remove_command_line_action(string name)
+        {
+            Application.get_default ().remove_action(name);
+            command_descriptions.remove(name);
         }
 
         public HashTable<string,string> get_command_descriptions ()
@@ -848,4 +856,3 @@ namespace Diodon
         }
     }
 }
-
