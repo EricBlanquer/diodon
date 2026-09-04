@@ -203,9 +203,7 @@ namespace Diodon.Plugins
                 "-o", SSH_CONTROL_PERSIST,
                 "-o", "ControlPath=%s".printf(get_ssh_control_path()),
                 target,
-                "sh",
-                "-c",
-                remote_command
+                "sh -c " + Shell.quote(remote_command)
             };
         }
 
