@@ -28,9 +28,12 @@ namespace Diodon
      */
     class ClipboardManager : GLib.Object
     {
+        private const uint SETTLE_DELAY_MS = 800;
+
         protected ClipboardType type;
         protected Gtk.Clipboard _clipboard = null;
         protected ClipboardConfiguration _configuration;
+        private uint mCheckTimeoutId;
 
         /**
          * Called when text from the clipboard has been received
@@ -38,7 +41,7 @@ namespace Diodon
          * @param type type of clipboard text belongs to
          * @param text received text from clipboard which is never null or empty
          */
-        public signal void on_text_received(ClipboardType type, string text, string? origin);
+        public signal void on_text_received(ClipboardType type, string text, string? origin, string? html);
 
         /**
          * Called when uris have been received from clipboard.
@@ -97,7 +100,19 @@ namespace Diodon
          */
         public virtual void start()
         {
-            _clipboard.owner_change.connect(check_clipboard);
+            _clipboard.owner_change.connect(schedule_check);
+        }
+
+        private void schedule_check()
+        {
+            if(mCheckTimeoutId != 0) {
+                Source.remove(mCheckTimeoutId);
+            }
+            mCheckTimeoutId = Timeout.add(SETTLE_DELAY_MS, () => {
+                mCheckTimeoutId = 0;
+                check_clipboard();
+                return Source.REMOVE;
+            });
         }
 
         /**
@@ -105,7 +120,11 @@ namespace Diodon
          */
         public virtual void stop()
         {
-            _clipboard.owner_change.disconnect(check_clipboard);
+            _clipboard.owner_change.disconnect(schedule_check);
+            if(mCheckTimeoutId != 0) {
+                Source.remove(mCheckTimeoutId);
+                mCheckTimeoutId = 0;
+            }
         }
 
         /**
@@ -139,6 +158,10 @@ namespace Diodon
             // on java applications such as jEdit wait_is_text_available returns
             // false even when some text is available
             string? text = request_text();
+            string? html = request_html();
+            if((text == null || text == "") && html != null) {
+                text = html_to_text(html);
+            }
             bool text_available = (text != null && text != "") || _clipboard.wait_is_text_available();
             bool image_available = _configuration.add_images && _clipboard.wait_is_image_available();
             bool uris_available = _clipboard.wait_is_uris_available();
@@ -155,7 +178,7 @@ namespace Diodon
                             on_uris_received(type, text, origin);
                          }
                          else {
-                            on_text_received(type, text, origin);
+                            on_text_received(type, text, origin, html);
                          }
                     }
                 }
@@ -195,6 +218,63 @@ namespace Diodon
             return result;
         }
 
+        protected string? request_html()
+        {
+            Gdk.Atom target = Gdk.Atom.intern(TextClipboardItem.HTML_MIME_TYPE, false);
+            if(!is_target_available(target)) {
+                return null;
+            }
+            Gtk.SelectionData? data = _clipboard.wait_for_contents(target);
+            if(data == null) {
+                return null;
+            }
+
+            unowned uint8[] raw = data.get_data();
+            int length = data.get_length();
+            if(raw == null || length <= 0) {
+                return null;
+            }
+
+            StringBuilder html = new StringBuilder();
+            for(int i = 0; i < length; ++i) {
+                if(raw[i] != 0) {
+                    html.append_c((char) raw[i]);
+                }
+            }
+            return html.str != "" && html.str.validate() ? html.str : null;
+        }
+
+        private static string html_to_text(string html)
+        {
+            try {
+                string text = new Regex("(?is)<br\\s*/?>").replace(html, html.length, 0, "\n");
+                text = new Regex("(?is)</(p|div|tr|pre|li|h[1-6])>").replace(text, text.length, 0, "\n");
+                text = new Regex("(?is)</t[dh]>").replace(text, text.length, 0, "\t");
+                text = new Regex("(?is)<[^>]+>").replace(text, text.length, 0, "");
+                text = text.replace("&nbsp;", " ").replace("&lt;", "<").replace("&gt;", ">")
+                    .replace("&mdash;", "\u2014").replace("&amp;", "&");
+                text = new Regex("\n{3,}").replace(text, text.length, 0, "\n\n");
+                return text.strip();
+            } catch(RegexError ex) {
+                warning("Clipboard html could not be reduced to text: %s", ex.message);
+                return "";
+            }
+        }
+
+        private bool is_target_available(Gdk.Atom expected)
+        {
+            Gdk.Atom[] targets = null;
+            if(!_clipboard.wait_for_targets(out targets)) {
+                return false;
+            }
+            foreach(Gdk.Atom target in targets) {
+                if(target == expected) {
+                    return true;
+                }
+            }
+            return false;
+        }
+
         /**
          * Check if clipboard content has been lost.
          */
@@ -207,4 +287,3 @@ namespace Diodon
         }
     }
 }
-

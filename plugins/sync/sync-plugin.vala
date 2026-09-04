@@ -300,6 +300,11 @@ namespace Diodon.Plugins
             }
             else {
                 packet.append_printf("text=%s\n", item.get_text().escape());
+                TextClipboardItem? text_item = item as TextClipboardItem;
+                string? html = text_item == null ? null : text_item.get_html();
+                if(html != null) {
+                    packet.append_printf("html=%s\n", html.escape());
+                }
             }
 
             return packet.str;
@@ -380,7 +385,8 @@ namespace Diodon.Plugins
             try {
                 if(packet.kind == KIND_TEXT) {
                     return new TextClipboardItem(ClipboardType.CLIPBOARD,
-                        packet.text, null, date_copied, packet.checksum);
+                        packet.text, null, date_copied, packet.checksum,
+                        packet.html);
                 }
 
                 if(packet.kind == KIND_FILES) {
@@ -468,6 +474,9 @@ namespace Diodon.Plugins
                 }
 
                 packet.text = text.compress();
+
+                string? html = values.lookup("html");
+                packet.html = html == null ? null : html.compress();
             }
             else {
                 warning("Clipboard sync import payload has an unsupported kind: %s",
@@ -604,6 +613,7 @@ namespace Diodon.Plugins
         private class SyncPacket : Object
         {
             public string kind;
+            public string? html;
             public int64 timestamp_usec;
             public string sender;
             public string checksum;

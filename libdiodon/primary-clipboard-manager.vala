@@ -88,7 +88,7 @@ namespace Diodon
             if(text != null && text != "") {
                 if(check_button_state()) {
                     string? origin = Utility.get_path_of_active_application();
-                    on_text_received(type, text, origin);
+                    on_text_received(type, text, origin, null);
                 }
             }
             // checking if clipboard might be empty

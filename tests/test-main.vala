@@ -27,6 +27,7 @@ namespace Diodon
         Gtk.init(ref args);
 
 	    TestSuite.get_root().add_suite(new TestImageClipboardItem().get_suite());
+	    TestSuite.get_root().add_suite(new TestTextClipboardItem().get_suite());
 	    TestSuite.get_root().add_suite(new TestController().get_suite());
 	    TestSuite.get_root().add_suite(new TestClipboardConfiguration().get_suite());
 
@@ -40,4 +41,3 @@ namespace Diodon
 	    return Test.run ();
     }
 }
-

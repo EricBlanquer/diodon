@@ -12,6 +12,7 @@ This fork adds the following improvements over the upstream version (PRs were su
 - **Status Icon plugin** — Alternative to the default Ayatana indicator plugin, using a native GTK status icon. Supports image preview tooltips and proper scroll reset after clearing history. Works on X11/Cinnamon (uses deprecated `Gtk.StatusIcon`, not compatible with Wayland)
 - **PRIMARY clipboard sync** — When "Use primary selection" is disabled, selected items are still synced to the PRIMARY clipboard for middle-click paste
 - **Clipboard sync between machines**: Optional SSH-based plugin synchronizes text and captured images between `iop` and `eric` without opening a listening port.
+- **Rich text history and synchronization** — Preserves both plain-text and HTML clipboard targets across history selection and machine synchronization.
 - **Preferences window focus** — Reopening preferences brings the existing window to front instead of silently ignoring the action
 
 ## Installing from source

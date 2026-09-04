@@ -22,6 +22,7 @@ test_diodon = executable('test-diodon', [
         'test-clipboard-configuration.vala',
         'test-controller.vala',
         'test-image-clipboard-item.vala',
+        'test-text-clipboard-item.vala',
         'test-main.vala',
         'test-zeitgeist-clipboard-storage.vala',
         'fsotest/assert.vala',

@@ -385,14 +385,14 @@ namespace Diodon
          * @param text text to be added
          * @param origin origin of clipboard item as application path
          */
-        public async void add_text_item(ClipboardType type, string text, string? origin)
+        public async void add_text_item(ClipboardType type, string text, string? origin, string? html = null)
         {
             string final_text = text;
             if(configuration.trim_trailing_whitespace) {
                 final_text = chomp_each_line(text);
             }
 
-            IClipboardItem item = new TextClipboardItem(type, final_text, origin, new DateTime.now_utc());
+            IClipboardItem item = new TextClipboardItem(type, final_text, origin, new DateTime.now_utc(), null, html);
             yield add_item(item);
 
             if(final_text != text) {

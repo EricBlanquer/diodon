@@ -545,7 +545,8 @@ namespace Diodon
 
             try {
                 if(strcmp(NFO.PLAIN_TEXT_DOCUMENT, interpretation) == 0) {
-                   item = new TextClipboardItem(ClipboardType.NONE, text, origin, date_copied, checksum);
+                   item = new TextClipboardItem.with_payload(ClipboardType.NONE, text, origin,
+                       date_copied, checksum, payload);
                 }
 
                 else if(strcmp(NFO.FILE_DATA_OBJECT, interpretation) == 0) {
@@ -663,4 +664,3 @@ namespace Diodon
         }
     }
 }
-
