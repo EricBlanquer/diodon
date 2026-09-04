@@ -8,14 +8,14 @@ msgstr ""
 "Project-Id-Version: diodon\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2017-06-05 14:18+0200\n"
-"PO-Revision-Date: 2014-03-09 07:57+0000\n"
-"Last-Translator: Michał Olber <michal.olber@osworld.pl>\n"
+"PO-Revision-Date: 2026-04-10 17:29+0000\n"
+"Last-Translator: Bartek <Unknown>\n"
 "Language-Team: Polish <pl@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2017-06-06 05:55+0000\n"
-"X-Generator: Launchpad (build 18399)\n"
+"X-Launchpad-Export-Date: 2026-04-11 07:29+0000\n"
+"X-Generator: Launchpad (build 63170d9f894f213bed2e467c153d97add655c51e)\n"
 "Language: pl\n"
 
 #: ../data/diodon.desktop.in.h:1
@@ -36,6 +36,8 @@ msgid ""
 "Adds content which is copied to the clipboard with e.g. Ctrl + C to the "
 "clipboard history."
 msgstr ""
+"Dodaje treść, która jest kopiowana do schowka za pomocą m.in. Ctrl + C, aby "
+"przejść do historii schowka."
 
 #: ../data/net.launchpad.Diodon.gschema.xml.in.in.h:3
 msgid "Use primary selection"
@@ -49,10 +51,13 @@ msgid ""
 "continually checks what is selected. This might discharge your battery "
 "quicker."
 msgstr ""
+"Dodaje podstawowy wybór (obszar ekranu zaznaczony myszką) do historii "
+"schowka. Włączenie uruchomi proces, który stale sprawdza, co zostało "
+"wybrane. Może to spowodować szybsze rozładowanie baterii."
 
 #: ../data/net.launchpad.Diodon.gschema.xml.in.in.h:5
 msgid "Add images to clipboard history"
-msgstr ""
+msgstr "Dodaj obrazy do historii schowka"
 
 #: ../data/net.launchpad.Diodon.gschema.xml.in.in.h:6
 #: ../data/preferences.ui.h:7
@@ -62,6 +67,10 @@ msgid ""
 "option will increase memory consumption. Images already added to clipboard "
 "history will remain even when disabled."
 msgstr ""
+"Dodaj obrazy skopiowane do schowka do historii schowka (np. po kliknięciu "
+"prawym przyciskiem myszy na obrazku w przeglądarce i wybraniu opcji kopiuj "
+"obraz). Włączenie tej opcji zwiększy zużycie pamięci. Obrazy dodane już do "
+"historii schowka pozostaną nawet po wyłączeniu."
 
 #: ../data/net.launchpad.Diodon.gschema.xml.in.in.h:7
 msgid "Synchronize clipboards"
@@ -89,6 +98,8 @@ msgid ""
 "Prevents an empty clipboard. For instance when an application exits, the "
 "clipboard would usually be emptied."
 msgstr ""
+"Zapobiega pustemu schowkowi. Na przykład po zamknięciu aplikacji schowek "
+"zwykle jest opróżniany."
 
 #: ../data/net.launchpad.Diodon.gschema.xml.in.in.h:11
 msgid "Automatically paste selected item"
@@ -104,31 +115,36 @@ msgstr ""
 
 #: ../data/net.launchpad.Diodon.gschema.xml.in.in.h:13
 msgid "Number of recent clipboard items"
-msgstr ""
+msgstr "Liczba ostatnich elementów w schowku"
 
 #: ../data/net.launchpad.Diodon.gschema.xml.in.in.h:14
 msgid "Number of recent clipboard items shown in clipboard menu."
-msgstr ""
+msgstr "Liczba ostatnich elementów schowka pokazanych w menu schowka."
 
 #: ../data/net.launchpad.Diodon.gschema.xml.in.in.h:15
 msgid "Clipboard content filter pattern"
-msgstr ""
+msgstr "Wzór filtra zawartości schowka"
 
 #: ../data/net.launchpad.Diodon.gschema.xml.in.in.h:16
 msgid ""
 "Regex filter pattern whereas all clipboard items matching this pattern will "
 "be filtered and not added to clipboard history."
 msgstr ""
+"Wzorzec filtra Regex, podczas gdy wszystkie elementy schowka pasujące do "
+"tego wzorca zostaną odfiltrowane i nie dodane do historii schowka."
 
 #: ../data/net.launchpad.Diodon.gschema.xml.in.in.h:17
 msgid "Lookup dictionary for application using different paste keybindings"
 msgstr ""
+"Wyszukaj słownik aplikacji przy użyciu różnych skrótów klawiszowych wklejania"
 
 #: ../data/net.launchpad.Diodon.gschema.xml.in.in.h:18
 msgid ""
 "A lookup dictionary for applications using different paste keybindings than "
 "Ctrl + V. Pattern of each string in this array is path-of-app|keybinding"
 msgstr ""
+"Słownik wyszukiwania dla aplikacji używających innych skrótów klawiszowych "
+"niż Ctrl + V. Wzorzec każdego ciągu w tej tablicy to path-of-app|keybinding"
 
 #: ../data/net.launchpad.Diodon.gschema.xml.in.in.h:19
 msgid "Active plugins"
@@ -152,7 +168,7 @@ msgstr "Używaj _podstawowego zaznaczenia"
 
 #: ../data/preferences.ui.h:6
 msgid "Add _images to clipboard history"
-msgstr ""
+msgstr "Dodaj _images do historii schowka"
 
 #: ../data/preferences.ui.h:8
 msgid "_Keep clipboard content"
@@ -168,11 +184,11 @@ msgstr "Wkleja automatycznie zaznaczony wpis"
 
 #: ../data/preferences.ui.h:14
 msgid "Number of recent clipboard items to be shown in clipboard menu."
-msgstr ""
+msgstr "Liczba ostatnich elementów schowka wyświetlanych w menu schowka."
 
 #: ../data/preferences.ui.h:15
 msgid "Number of recent items"
-msgstr ""
+msgstr "Liczba ostatnich elementów"
 
 #: ../data/preferences.ui.h:16 ../unity-scope-diodon/unity-scope-diodon.vala:75
 msgid "Clipboard"
@@ -184,14 +200,17 @@ msgid ""
 "your desktop environment.\n"
 "Use /usr/bin/diodon as command."
 msgstr ""
+"Zarejestruj niestandardowy skrót za pomocą\n"
+"środowiska pulpitu.\n"
+"Użyj /usr/bin/diodon jako polecenia"
 
 #: ../data/preferences.ui.h:20
 msgid "More information"
-msgstr ""
+msgstr "Więcej informacji"
 
 #: ../data/preferences.ui.h:21
 msgid "Hotkeys"
-msgstr ""
+msgstr "Skróty klawiszowe"
 
 #: ../data/preferences.ui.h:22
 msgid "Plugins"
@@ -204,6 +223,8 @@ msgstr "<Pusty>"
 #: ../libdiodon/clipboard-menu.vala:53
 msgid "Privacy mode is enabled. No new items will be added to history!"
 msgstr ""
+"Tryb prywatności jest włączony. Żadne nowe elementy nie zostaną dodane do "
+"historii!"
 
 #: ../plugins/indicator/indicator.plugin.in.h:1
 msgid "Application Indicator"
@@ -219,13 +240,15 @@ msgstr "Prawa autorskie © 2011 Diodon Team"
 
 #: ../unity-scope-diodon/clipboard.scope.in.in.h:1
 msgid "Clipboard History"
-msgstr ""
+msgstr "Historia schowka"
 
 #: ../unity-scope-diodon/clipboard.scope.in.in.h:2
 msgid ""
 "This is an Ubuntu search plugin that enables information from Diodon to be "
 "searched and displayed in the Dash underneath the Clipboard header."
 msgstr ""
+"Jest to wtyczka wyszukiwania Ubuntu, która umożliwia wyszukiwanie informacji "
+"z Diodon i wyświetlanie ich w Dash pod nagłówkiem Schowka."
 
 #: ../unity-scope-diodon/clipboard.scope.in.in.h:3
 msgid "Search clipboard"
@@ -235,61 +258,61 @@ msgstr "Przeszukaj schowek systemowy"
 #: ../unity-scope-diodon/unity-scope-diodon.vala:79
 #: ../unity-scope-diodon/unity-scope-diodon.vala:104
 msgid "Text"
-msgstr ""
+msgstr "Tekst"
 
 #: ../unity-scope-diodon/clipboard.scope.in.in.h:5
 #: ../unity-scope-diodon/unity-scope-diodon.vala:84
 #: ../unity-scope-diodon/unity-scope-diodon.vala:105
 msgid "Files"
-msgstr ""
+msgstr "Pliki"
 
 #: ../unity-scope-diodon/clipboard.scope.in.in.h:6
 #: ../unity-scope-diodon/unity-scope-diodon.vala:89
 #: ../unity-scope-diodon/unity-scope-diodon.vala:106
 msgid "Images"
-msgstr ""
+msgstr "Obrazy"
 
 #: ../unity-scope-diodon/clipboard.scope.in.in.h:7
 #: ../unity-scope-diodon/unity-scope-diodon.vala:101
 msgid "Category"
-msgstr ""
+msgstr "Kategoria"
 
 #: ../unity-scope-diodon/clipboard.scope.in.in.h:8
 msgid "Text;Files;Images"
-msgstr ""
+msgstr "Tekst;Pliki;Obrazy"
 
 #: ../unity-scope-diodon/clipboard.scope.in.in.h:9
 msgid "Last 24 hours;Last 7 days;Last 30 days;Last year;"
-msgstr ""
+msgstr "Ostatnie 24 godziny;Ostatnie 7 dni;Ostatnie 30 dni;Ostatni rok;"
 
 #: ../unity-scope-diodon/unity-scope-diodon.vala:45
 msgid "Search Clipboard"
-msgstr ""
+msgstr "Wyszukaj w schowku"
 
 #: ../unity-scope-diodon/unity-scope-diodon.vala:110
 #: ../unity-scope-diodon/unity-scope-diodon.vala:231
 msgid "Date copied"
-msgstr ""
+msgstr "Data skopiowana"
 
 #: ../unity-scope-diodon/unity-scope-diodon.vala:112
 msgid "Last 24 hours"
-msgstr ""
+msgstr "Ostatnie 24 godziny"
 
 #: ../unity-scope-diodon/unity-scope-diodon.vala:113
 msgid "Last 7 days"
-msgstr ""
+msgstr "Ostatnie 7 dni"
 
 #: ../unity-scope-diodon/unity-scope-diodon.vala:114
 msgid "Last 30 days"
-msgstr ""
+msgstr "Ostatnie 30 dni"
 
 #: ../unity-scope-diodon/unity-scope-diodon.vala:115
 msgid "Last year"
-msgstr ""
+msgstr "Ostatni rok"
 
 #: ../unity-scope-diodon/unity-scope-diodon.vala:216
 msgid "Paste"
-msgstr ""
+msgstr "Wklej"
 
 #: ../unity-scope-diodon/unity-scope-diodon.vala:224
 msgid "Origin"
