@@ -62,9 +62,8 @@ namespace Diodon.Plugins
 
         public Object object { owned get; construct; }
 
-        public SyncPlugin()
+        construct
         {
-            Object();
             imports_in_progress = new HashTable<string,string>(str_hash, str_equal);
         }
 

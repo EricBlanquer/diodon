@@ -15,7 +15,7 @@ plugin_sync = shared_library('sync',
     install_dir: join_paths(pkgpluginslibdir, 'sync'),
 )
 
-i18n.merge_file(
+plugin_sync_metadata = i18n.merge_file(
     type: 'desktop',
     input: 'sync.plugin.in',
     output: 'sync.plugin',

@@ -46,3 +46,15 @@ test('test-diodon', xvfb_run,
           'top_srcdir=' + meson.project_source_root(),
           'srcdir=' + meson.current_source_dir()],
     args: [test_diodon.full_path()])
+
+test_sync_plugin = executable('test-sync-plugin', 'test-sync-plugin.vala',
+    vala_args: common_vflags,
+    c_args: common_cflags,
+    dependencies: [gtk_dep, libpeas_dep, zeitgeist_dep],
+    link_with: [libdiodon],
+    include_directories: [libdiodon_inc])
+
+test('test-sync-plugin', xvfb_run,
+    env: ['top_builddir=' + meson.project_build_root()],
+    args: ['-a', test_sync_plugin.full_path()],
+    depends: [plugin_sync, plugin_sync_metadata, test_sync_plugin])
