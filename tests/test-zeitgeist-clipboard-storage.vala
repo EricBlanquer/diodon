@@ -54,6 +54,10 @@ namespace Diodon
 		        cb => test_get_recent_items_image.begin(cb),
 		        res => test_get_recent_items_image.end(res)
 		    );
+		    add_async_test("test_get_recent_items_date_copied",
+		        cb => test_get_recent_items_date_copied.begin(cb),
+		        res => test_get_recent_items_date_copied.end(res)
+		    );
 		    add_async_test("test_get_item_by_checksum",
 		        cb => test_get_item_by_checksum.begin(cb),
 		        res => test_get_item_by_checksum.end(res)
@@ -140,8 +144,8 @@ namespace Diodon
 	        // add test data
 	        yield this.storage.add_item(new TextClipboardItem(ClipboardType.CLIPBOARD, "1", "/path/to/app", new DateTime.now_utc()));
 	        yield this.storage.add_item(new FileClipboardItem(ClipboardType.CLIPBOARD,
-	            Config.TEST_DATA_DIR + "Diodon-64x64.png", "/path/to/app", new DateTime.now_utc()));
-	        Gdk.Pixbuf pixbuf = new Gdk.Pixbuf.from_file(Config.TEST_DATA_DIR + "Diodon-64x64.png");
+	            get_test_image_path(), "/path/to/app", new DateTime.now_utc()));
+	        Gdk.Pixbuf pixbuf = new Gdk.Pixbuf.from_file(get_test_image_path());
 	        yield this.storage.add_item(new ImageClipboardItem.with_image(ClipboardType.CLIPBOARD,
 	            pixbuf, "/path/to/app", new DateTime.now_utc()));
 
@@ -154,7 +158,7 @@ namespace Diodon
 	    public async void test_get_recent_items_image() throws FsoFramework.Test.AssertError, GLib.Error
 	    {
 	        // add image item
-            Gdk.Pixbuf pixbuf = new Gdk.Pixbuf.from_file(Config.TEST_DATA_DIR + "Diodon-64x64.png");
+            Gdk.Pixbuf pixbuf = new Gdk.Pixbuf.from_file(get_test_image_path());
 	        yield this.storage.add_item(new ImageClipboardItem.with_image(ClipboardType.CLIPBOARD,
 	            pixbuf, "/path/to/app", new DateTime.now_utc()));
 
@@ -162,6 +166,21 @@ namespace Diodon
 	        FsoFramework.Test.Assert.are_equal(items.length(), 1, "Invalid number of recent items");
 	        IClipboardItem item = items.nth_data(0);
 	        FsoFramework.Test.Assert.are_equal_string(item.get_label(), "[64x64]", "Invalid image label");
+	    }
+
+	    public async void test_get_recent_items_date_copied() throws FsoFramework.Test.AssertError, GLib.Error
+	    {
+	        DateTime added = new DateTime.now_utc();
+	        yield this.storage.add_item(new TextClipboardItem(ClipboardType.CLIPBOARD,
+	            "test_get_recent_items_date_copied", "/path/to/app", added));
+
+	        List<IClipboardItem> items = yield this.storage.get_recent_items(1);
+	        FsoFramework.Test.Assert.are_equal(items.length(), 1, "Invalid number of recent items");
+	        DateTime? date_copied = items.nth_data(0).get_date_copied();
+	        FsoFramework.Test.Assert.is_true(date_copied != null, "Missing copy date");
+	        TimeSpan offset = date_copied.difference(added);
+	        FsoFramework.Test.Assert.is_true(offset > -TimeSpan.SECOND && offset < TimeSpan.MINUTE,
+	            "Copy date does not match the insertion time");
 	    }
 
 	    public async void test_get_item_by_checksum() throws FsoFramework.Test.AssertError
@@ -185,8 +204,8 @@ namespace Diodon
 	        // add test data
 	        yield this.storage.add_item(new TextClipboardItem(ClipboardType.CLIPBOARD, "1", "/path/to/app", new DateTime.now_utc()));
 	        yield this.storage.add_item(new FileClipboardItem(ClipboardType.CLIPBOARD,
-	            Config.TEST_DATA_DIR + "Diodon-64x64.png", "/path/to/app", new DateTime.now_utc()));
-	        Gdk.Pixbuf pixbuf = new Gdk.Pixbuf.from_file(Config.TEST_DATA_DIR + "Diodon-64x64.png");
+	            get_test_image_path(), "/path/to/app", new DateTime.now_utc()));
+	        Gdk.Pixbuf pixbuf = new Gdk.Pixbuf.from_file(get_test_image_path());
 	        yield this.storage.add_item(new ImageClipboardItem.with_image(ClipboardType.CLIPBOARD,
 	            pixbuf, "/path/to/app", new DateTime.now_utc()));
 
@@ -220,6 +239,11 @@ namespace Diodon
                 warning(e.message);
             }
         }
+
+	    private static string get_test_image_path()
+	    {
+	        return Path.build_filename(Config.TEST_DATA_DIR, "Diodon-64x64.png");
+	    }
 
 	    /**
 	     * assert whether text item is added to Zeitgeist Log in assigned quantity

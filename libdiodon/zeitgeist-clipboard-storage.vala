@@ -527,6 +527,12 @@ namespace Diodon
             }
         }
 
+        private static DateTime date_from_timestamp(int64 timestamp)
+        {
+            return new DateTime.from_unix_utc(timestamp / Timestamp.SECOND).add(
+                (timestamp % Timestamp.SECOND) * TimeSpan.MILLISECOND);
+        }
+
         private static IClipboardItem? create_clipboard_item(Event event, Subject subject)
         {
             string interpretation = subject.interpretation;
@@ -535,7 +541,7 @@ namespace Diodon
             string checksum = subject.uri.split(":")[1];
             string? origin = subject.origin;
             unowned ByteArray payload = event.payload;
-            DateTime date_copied = new DateTime.from_unix_utc(event.timestamp);
+            DateTime date_copied = date_from_timestamp(event.timestamp);
 
             if(text == null) {
                 warning("Skipping clipboard item with null text (checksum: %s, interpretation: %s)",

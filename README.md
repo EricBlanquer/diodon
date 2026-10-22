@@ -12,6 +12,7 @@ This fork adds the following improvements over the upstream version (PRs were su
 - **Status Icon plugin** — Alternative to the default Ayatana indicator plugin, using a native GTK status icon. Supports image preview tooltips and proper scroll reset after clearing history. Works on X11/Cinnamon (uses deprecated `Gtk.StatusIcon`, not compatible with Wayland)
 - **PRIMARY clipboard sync** — When "Use primary selection" is disabled, selected items are still synced to the PRIMARY clipboard for middle-click paste
 - **Clipboard sync between machines**: Optional SSH-based plugin synchronizes text and captured images between `iop` and `eric` without opening a listening port.
+- **Clipboard sync peer discovery**: Each machine locates its peer with `~/binPerso/host-<peer>` and locates it again after a failed send, so a VPN capturing internal DNS names or a DHCP address change does not interrupt synchronization.
 - **Clipboard sync loop prevention** — Initializes the import guard when libpeas creates the plugin, preventing imported items from being sent back to their source.
 - **Rich text history and synchronization** — Preserves both plain-text and HTML clipboard targets across history selection and machine synchronization.
 - **Preferences window focus** — Reopening preferences brings the existing window to front instead of silently ignoring the action
@@ -67,6 +68,7 @@ For uninstalling type this:
 When using the Clipboard Sync plugin, disable clipboard sharing in other tools such as Synergy to avoid competing clipboard updates.
 Synergy can misclassify a delayed BMP response as text, replacing a screenshot with a `BM` entry followed by binary characters.
 Keep Synergy's keyboard and mouse sharing enabled; Diodon handles clipboard synchronization independently.
+Only copied items (CLIPBOARD) are sent to the other machine; a mouse selection alone (PRIMARY) stays local.
 
 If you would like to write your own Diodon plugin please refer to [the original blog post](http://esite.ch/2011/10/19/writing-a-plugin-for-diodon/). Feel free to add your own plugins to the list below.
 

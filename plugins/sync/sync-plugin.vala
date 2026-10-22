@@ -29,7 +29,8 @@ namespace Diodon.Plugins
         private const string KIND_IMAGE = "image";
         private const string KIND_TEXT = "text";
         private const string PACKET_HEADER = "diodon-sync-v1";
-        private const uint LOOKUP_TIMEOUT_SECONDS = 8;
+        private const string LOCATOR_PREFIX = "host-";
+        private const uint LOOKUP_TIMEOUT_SECONDS = 30;
         private const uint SSH_TIMEOUT_SECONDS = 15;
         private const string SSH_CONTROL_MASTER = "ControlMaster=auto";
         private const string SSH_CONTROL_PERSIST = "ControlPersist=10m";
@@ -126,55 +127,45 @@ namespace Diodon.Plugins
 
         private async void push_item(IClipboardItem item)
         {
-            try {
-                string? target = yield resolve_peer_target();
-                if(target == null) {
-                    return;
-                }
+            string? packet = serialize_item(item);
+            if(packet == null) {
+                return;
+            }
 
-                string? packet = serialize_item(item);
-                if(packet == null) {
-                    return;
-                }
+            bool reused_target = cached_peer_target != null;
+            string? failure = yield send_to_peer(packet);
+            if(failure != null && reused_target) {
+                cached_peer_target = null;
+                failure = yield send_to_peer(packet);
+            }
 
-                string? stderr_data;
-                bool success = yield send_packet(target, packet, out stderr_data);
-                if(!success && local_hostname == DESKTOP_HOST &&
-                    cached_peer_target != null) {
-                    cached_peer_target = null;
-                    target = yield resolve_laptop_target();
-                    if(target != null) {
-                        success = yield send_packet(target, packet,
-                            out stderr_data);
-                    }
-                }
-
-                if(!success) {
-                    warning("Clipboard sync to %s failed: %s",
-                        target, summarize_error(stderr_data));
-                }
-            } catch(Error e) {
-                warning("Clipboard sync failed: %s", e.message);
+            if(failure != null) {
+                warning("Clipboard sync failed: %s", failure);
             }
         }
 
-        private async bool send_packet(string target, string packet,
-            out string? stderr_data) throws Error
+        private async string? send_to_peer(string packet)
         {
-            string? stdout_data;
-            return yield run_process(create_ssh_argv(target,
-                REMOTE_IMPORT_SCRIPT), packet, SSH_TIMEOUT_SECONDS,
-                out stdout_data, out stderr_data);
+            string? target = null;
+            try {
+                target = yield resolve_peer_target();
+                string? stdout_data;
+                string? stderr_data;
+                bool success = yield run_process(create_ssh_argv(target,
+                    REMOTE_IMPORT_SCRIPT), packet, SSH_TIMEOUT_SECONDS,
+                    out stdout_data, out stderr_data);
+                return success ? null :
+                    "%s: %s".printf(target, summarize_error(stderr_data));
+            } catch(Error e) {
+                return target == null ? e.message :
+                    "%s: %s".printf(target, e.message);
+            }
         }
 
         private async void warm_connection()
         {
             try {
-                string? target = yield resolve_peer_target();
-                if(target == null) {
-                    return;
-                }
-
+                string target = yield resolve_peer_target();
                 string? stdout_data;
                 string? stderr_data;
                 bool success = yield run_process(create_ssh_argv(target,
@@ -206,33 +197,23 @@ namespace Diodon.Plugins
             };
         }
 
-        private async string? resolve_peer_target() throws Error
+        private async string resolve_peer_target() throws Error
         {
             if(cached_peer_target != null) {
                 return cached_peer_target;
             }
 
-            if(local_hostname == LAPTOP_HOST) {
-                cached_peer_target = "%s@%s".printf(SSH_USER, DESKTOP_HOST);
-                return cached_peer_target;
+            string? peer = get_peer_hostname(local_hostname);
+            if(peer == null) {
+                throw new IOError.NOT_SUPPORTED(
+                    "only configured for %s and %s, not %s",
+                    DESKTOP_HOST, LAPTOP_HOST, local_hostname);
             }
 
-            if(local_hostname == DESKTOP_HOST) {
-                return yield resolve_laptop_target();
-            }
-
-            warning("Clipboard sync is only configured for %s and %s, not %s",
-                DESKTOP_HOST, LAPTOP_HOST, local_hostname);
-            return null;
-        }
-
-        private async string? resolve_laptop_target() throws Error
-        {
-            string locator = get_laptop_locator_path();
+            string locator = get_peer_locator_path(peer);
             if(!FileUtils.test(locator, FileTest.IS_EXECUTABLE)) {
-                warning("Clipboard sync laptop resolver is not executable: %s",
+                throw new IOError.NOT_FOUND("resolver %s is not executable",
                     locator);
-                return null;
             }
 
             string? stdout_data;
@@ -241,15 +222,14 @@ namespace Diodon.Plugins
             bool success = yield run_process(argv, null, LOOKUP_TIMEOUT_SECONDS,
                 out stdout_data, out stderr_data);
             if(!success) {
-                warning("Clipboard sync laptop resolver failed: %s",
+                throw new IOError.FAILED("resolver %s failed: %s", locator,
                     summarize_error(stderr_data));
-                return null;
             }
 
             string? host = first_non_empty_line(stdout_data);
             if(host == null) {
-                warning("Clipboard sync laptop resolver returned no host");
-                return null;
+                throw new IOError.FAILED("resolver %s returned no host",
+                    locator);
             }
 
             cached_peer_target = host.index_of("@") >= 0 ?
@@ -516,6 +496,8 @@ namespace Diodon.Plugins
                 }
                 if(cancellable.is_cancelled()) {
                     process.force_exit();
+                    throw new IOError.TIMED_OUT("%s timed out after %u seconds",
+                        argv[0], timeout_seconds);
                 }
                 throw e;
             }
@@ -576,10 +558,23 @@ namespace Diodon.Plugins
             return hostname.split(".", 2)[0];
         }
 
-        private static string get_laptop_locator_path()
+        private static string? get_peer_hostname(string hostname)
+        {
+            if(hostname == DESKTOP_HOST) {
+                return LAPTOP_HOST;
+            }
+
+            if(hostname == LAPTOP_HOST) {
+                return DESKTOP_HOST;
+            }
+
+            return null;
+        }
+
+        private static string get_peer_locator_path(string peer)
         {
             return Path.build_filename(Environment.get_home_dir(), "binPerso",
-                "host-eric");
+                LOCATOR_PREFIX + peer);
         }
 
         private static string? first_non_empty_line(string? text)
