@@ -25,6 +25,7 @@ namespace Diodon.Plugins
         private const string LAPTOP_HOST = "eric";
         private const string SSH_USER = "eric";
         private const string DIODON_BINARY = "/usr/local/bin/diodon";
+        private const string APPLICATION_ID = "net.launchpad.Diodon";
         private const string KIND_FILES = "files";
         private const string KIND_IMAGE = "image";
         private const string KIND_TEXT = "text";
@@ -39,20 +40,25 @@ namespace Diodon.Plugins
             "cleanup() { rm -f \"$tmp\"; }\n" +
             "trap cleanup EXIT HUP INT TERM\n" +
             "cat > \"$tmp\" || exit 1\n" +
-            "pid=\"$(pgrep -n -u \"$(id -u)\" -x diodon || true)\"\n" +
-            "if [ -n \"$pid\" ] && [ -r \"/proc/$pid/environ\" ]; then\n" +
-            "  env_file=\"/proc/$pid/environ\"\n" +
-            "  display=\"$(tr '\\0' '\\n' < \"$env_file\" | sed -n 's/^DISPLAY=//p' | tail -n 1)\"\n" +
-            "  dbus=\"$(tr '\\0' '\\n' < \"$env_file\" | sed -n 's/^DBUS_SESSION_BUS_ADDRESS=//p' | tail -n 1)\"\n" +
-            "  xauthority=\"$(tr '\\0' '\\n' < \"$env_file\" | sed -n 's/^XAUTHORITY=//p' | tail -n 1)\"\n" +
+            ": \"${DBUS_SESSION_BUS_ADDRESS:=unix:path=/run/user/$(id -u)/bus}\"\n" +
+            "export DBUS_SESSION_BUS_ADDRESS\n" +
+            "pid=\"$(gdbus call --session --dest org.freedesktop.DBus" +
+            " --object-path /org/freedesktop/DBus" +
+            " --method org.freedesktop.DBus.GetConnectionUnixProcessID " + APPLICATION_ID +
+            " 2>/dev/null | sed -n 's/^(uint32 \\([0-9]*\\),)$/\\1/p')\"\n" +
+            "if [ -z \"$pid\" ]; then\n" +
+            "  echo \"" + APPLICATION_ID + " has no owner on $DBUS_SESSION_BUS_ADDRESS\" >&2\n" +
+            "  exit 1\n" +
+            "fi\n" +
+            "read_env() { tr '\\0' '\\n' < \"/proc/$pid/environ\" | sed -n \"s/^$1=//p\" | tail -n 1; }\n" +
+            "if [ -r \"/proc/$pid/environ\" ]; then\n" +
+            "  display=\"$(read_env DISPLAY)\"\n" +
+            "  xauthority=\"$(read_env XAUTHORITY)\"\n" +
             "  [ -n \"$display\" ] && export DISPLAY=\"$display\"\n" +
-            "  [ -n \"$dbus\" ] && export DBUS_SESSION_BUS_ADDRESS=\"$dbus\"\n" +
             "  [ -n \"$xauthority\" ] && export XAUTHORITY=\"$xauthority\"\n" +
             "fi\n" +
-            "uid=\"$(id -u)\"\n" +
-            ": \"${DBUS_SESSION_BUS_ADDRESS:=unix:path=/run/user/$uid/bus}\"\n" +
             ": \"${DISPLAY:=:0}\"\n" +
-            "export DBUS_SESSION_BUS_ADDRESS DISPLAY\n" +
+            "export DISPLAY\n" +
             DIODON_BINARY + " " + ACTION_IMPORT + " \"$tmp\"\n";
 
         private Controller controller;
